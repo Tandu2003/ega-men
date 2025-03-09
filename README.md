@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EGA Men's Fashion  
 
-## Getting Started
+EGA Men's Fashion is an e-commerce project focused on providing high-quality men's fashion products. The website offers a variety of clothing items, including jackets, shirts, t-shirts, trousers, jeans, and shorts. Additionally, it features attractive promotions and excellent customer service.  
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Technologies Used  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Next.js** – Server-side rendering and static site generation for better performance.  
+- **Tailwind CSS** – Utility-first CSS framework for a clean and responsive UI.  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Installation & Setup  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone the repository**:  
 
-## Learn More
+   ```bash
+   git clone https://github.com/Tandu2003/ega-men-style.git
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Install dependencies**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+	```bash
+	cd ega-men-style
+	```
+	```bash
+	npm install
+	```
 
-## Deploy on Vercel
+3. **Run the development server**:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+	```bash
+	npm run dev
+	```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application will be available at http://localhost:3000.
+
+**Contributions**
+
+I welcome contributions from the community to improve this project. Feel free to open an issue or submit a pull request on GitHub.
+
