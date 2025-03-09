@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+:root {
+  --text-color: #000000;
+  --body-background: #f8f8f8;
+  --text-secondary-color: #666666;
+  --primary-color: #080808;
+  --secondary-color: #292929;
+  --price-color: #155bf6;
+  --subheader-background: #e5677d;
+  --subheader-color: #f9f9f6;
+  --header-category-bg: #a50a06;
+  --header-category-color: #fff3f4;
+  --label-background: #df0000;
+  --label-color: #ffffff;
+  --footer-bg: #81aacc;
+  --footer-color: #ffffff;
+  --show-loadmore: none !important;
+  --order-loadmore: -1 !important;
+  --sale-pop-color: #d82e4d;
+  --addtocart-bg: #155bf6;
+  --addtocart-text-color: #ffffff;
+  --cta-color: #000000;
+  --section-coupon-bg: #155bf6;
+  --coupon-title-color: #155bf6;
+  --coupon-button-color: #155bf6;
+  --col-menu: 4;
+  --border-color: #f1f1f1;
+  --link-color: #2f80ed;
+  --coupon-code-background: #fff;
+  --coupon-lite-border: #155bf6;
+  --product-promotion-bg: #f33828;
+  --policies-bg: #ffffff;
+  --policies-color: #050000;
+  --product-promotion-color: #155bf6;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://theme.hstatic.net/200000696635/1001257291/14/mulish-regular.ttf?v=107")
+    format("truetype");
+}
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://file.hstatic.net/200000525857/file/mulish-semibold_ab8e949db9544939bc2500452db518f3.ttf")
+    format("truetype");
+}
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("https://file.hstatic.net/200000525857/file/mulish-bold_895d17b8bdac41c19dcf238af2e83fc0.ttf")
+    format("truetype");
+}
+
+body {
+  color: var(--text-color);
+  background: #fff;
+  overflow-x: hidden;
+  max-width: 100%;
+  font-family: "Mulish", sans-serif;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1230px;
+  }
+}
+
+@media (min-width: 1800px) {
+  .container{
+    max-width: 1650px;
+  }
+}
+
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
