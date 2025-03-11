@@ -14,13 +14,13 @@ export default function TopBar() {
   return (
     <>
       <div
-        className={`top-banner bg-[#81AACC] relative transition-all duration-500 ${
+        className={`top-banner relative bg-[#81AACC] transition-all duration-500 ${
           close ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
         }`}
       >
-        <div className="container text-center px-0">
+        <div className="container px-0 text-center">
           <Link
-            className="relative text-white text-[12px] block h-7.5 leading-7.5 min-[991px]:text-[15px] min-[991px]:h-10 min-[991px]:leading-10"
+            className="relative block h-7.5 text-[12px] leading-7.5 text-white min-[991px]:h-10 min-[991px]:text-[15px] min-[991px]:leading-10"
             title="FREESHIP VỚI ĐƠN HÀNG TỪ 500K"
             href="/collections/all"
           >
@@ -28,7 +28,7 @@ export default function TopBar() {
           </Link>
           <button
             onClick={handleClose}
-            className="z-[9] absolute top-1/2 -translate-y-1/2 right-1 bg-white rounded-full w-6 h-6"
+            className="absolute top-1/2 right-1 z-[9] h-6 w-6 -translate-y-1/2 rounded-full bg-white"
           >
             <span className="text-xl leading-1 font-thin">&times;</span>
           </button>

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "EGA Men Style",
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-white text-black" cz-shortcut-listen="true">
         <TopBar />
+        <Header />
         {children}
       </body>
     </html>
