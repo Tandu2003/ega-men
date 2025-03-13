@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "EGA Men Style",
@@ -22,6 +23,7 @@ export default function RootLayout({
         <TopBar />
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

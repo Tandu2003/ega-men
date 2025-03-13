@@ -121,7 +121,7 @@ export default function Header() {
                       <Link
                         href={item.href}
                         title={item.title}
-                        className={`header-menu-item relative flex items-center px-[15px] py-[20px] whitespace-nowrap no-underline group-hover:after:w-[calc(100%-30px)] ${translateHeader}`}
+                        className="header-menu-item relative flex items-center px-[15px] py-[20px] whitespace-nowrap no-underline"
                       >
                         <span>{item.title}</span>
                         {item?.subMenu && (
@@ -178,7 +178,7 @@ export default function Header() {
             </div>
           </div>
           <div>
-            <div className="flex items-center justify-end gap-3.5">
+            <div className="flex items-center justify-end gap-2 md:gap-3.5">
               <span className="cursor-pointer" title="Tìm kiếm">
                 <Image
                   src="/svg/search.svg"
@@ -243,102 +243,115 @@ export default function Header() {
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Menu for mobile */}
-      <div
-        className={`fixed top-0 left-0 z-[9999] h-full w-[300px] overflow-y-auto bg-white transition-transform duration-300 ${openMenuMobile ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        <div className="flex items-center bg-[var(--primary-color)] p-[10px_15px] text-white">
-          <Image src="/svg/account.svg" alt="account" width={42} height={42} />
-          <div className="ml-[10px] flex flex-col">
-            {userData ? (
-              <>
-                <span>{`${userData.firstName} ${userData.lastName}`}</span>
-                <Link
-                  href="/"
-                  onClick={handleLogout}
-                  className="text-[80%] font-normal"
-                >
-                  Đăng xuất
-                </Link>
-              </>
-            ) : (
-              <>
-                <span>Tài khoản</span>
-                <Link href="/account/login" className="text-[80%] font-normal">
-                  Đăng nhập
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="overflow-y-auto">
-          <nav className="block">
-            <ul className="max-h-auto flex w-full max-w-full flex-col flex-wrap overflow-x-auto">
-              {headerMenu.map((item, index) => (
-                <li
-                  key={index}
-                  className="[position:initial] border-b-0 bg-transparent p-0"
-                >
+        {/* Menu for mobile */}
+        <div
+          className={`fixed top-0 left-0 z-[9999] h-full w-[300px] overflow-y-auto bg-white transition-transform duration-300 ${openMenuMobile ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="flex items-center bg-[var(--primary-color)] p-[10px_15px] text-white">
+            <Image
+              src="/svg/account.svg"
+              alt="account"
+              width={42}
+              height={42}
+            />
+            <div className="ml-[10px] flex flex-col">
+              {userData ? (
+                <>
+                  <span>{`${userData.firstName} ${userData.lastName}`}</span>
                   <Link
-                    href={item.href}
-                    title={item.title}
-                    className="relative flex items-center justify-between p-[10px_15px] whitespace-nowrap"
+                    href="/"
+                    onClick={handleLogout}
+                    className="text-[80%] font-normal"
                   >
-                    <span>{item.title}</span>
-                    {item?.subMenu && (
-                      <span className="ml-[5px] -rotate-90">
-                        <Image
-                          src="/svg/arrowdown.svg"
-                          alt="arrow-down"
-                          width={16}
-                          height={16}
-                        />
-                      </span>
-                    )}
+                    Đăng xuất
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-        <div className="absolute bottom-0 left-0 flex w-full items-center bg-[#f4f4f4] text-center">
-          <div className="w-1/2 p-2">
-            <Link
-              href="tel:19001393"
-              title="19001393"
-              className="flex items-center justify-center gap-1.5 text-sky-600"
-            >
-              <span>Gọi điện</span>
-              <Image src="/svg/phone.svg" alt="phone" width={20} height={20} />
-            </Link>
+                </>
+              ) : (
+                <>
+                  <span>Tài khoản</span>
+                  <Link
+                    href="/account/login"
+                    className="text-[80%] font-normal"
+                  >
+                    Đăng nhập
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-          <div className="w-1/2 border-l border-[#dee2e6] p-2">
-            <Link
-              href="tel:19001393"
-              title="19001393"
-              className="flex items-center justify-center gap-1.5 text-sky-600"
-            >
-              <span>Nhắn tin</span>
-              <Image
-                src="/svg/messenger.svg"
-                alt="messenger"
-                width={20}
-                height={20}
-              />
-            </Link>
+          <div className="overflow-y-auto">
+            <nav className="block">
+              <ul className="max-h-auto flex w-full max-w-full flex-col flex-wrap overflow-x-auto">
+                {headerMenu.map((item, index) => (
+                  <li
+                    key={index}
+                    className="[position:initial] border-b-0 bg-transparent p-0"
+                  >
+                    <Link
+                      href={item.href}
+                      title={item.title}
+                      className="relative flex items-center justify-between p-[10px_15px] whitespace-nowrap"
+                    >
+                      <span>{item.title}</span>
+                      {item?.subMenu && (
+                        <span className="ml-[5px] -rotate-90">
+                          <Image
+                            src="/svg/arrowdown.svg"
+                            alt="arrow-down"
+                            width={16}
+                            height={16}
+                          />
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          <div className="absolute bottom-0 left-0 flex w-full items-center bg-[#f4f4f4] text-center">
+            <div className="w-1/2 p-2">
+              <Link
+                href="tel:19001393"
+                title="19001393"
+                className="flex items-center justify-center gap-1.5 text-sky-600"
+              >
+                <span>Gọi điện</span>
+                <Image
+                  src="/svg/phone.svg"
+                  alt="phone"
+                  width={20}
+                  height={20}
+                />
+              </Link>
+            </div>
+            <div className="w-1/2 border-l border-[#dee2e6] p-2">
+              <Link
+                href="tel:19001393"
+                title="19001393"
+                className="flex items-center justify-center gap-1.5 text-sky-600"
+              >
+                <span>Nhắn tin</span>
+                <Image
+                  src="/svg/messenger.svg"
+                  alt="messenger"
+                  width={20}
+                  height={20}
+                />
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Menu overlay */}
-      <div
-        className={`fixed top-0 left-0 z-[1000] h-full w-full bg-[rgba(0,0,0,0.5)] transition-opacity duration-300 ${
-          openMenuMobile ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-        onClick={() => setOpenMenuMobile(false)}
-      />
+        {/* Menu overlay */}
+        <div
+          className={`fixed top-0 left-0 z-[1000] h-full w-full bg-[rgba(0,0,0,0.5)] transition-opacity duration-300 ${
+            openMenuMobile ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          onClick={() => setOpenMenuMobile(false)}
+        />
+      </header>
     </>
   );
 }
