@@ -9,26 +9,91 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [recoverEmail, setRecoverEmail] = useState("");
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleOnChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     if (name === "email") setEmail(value);
     if (name === "password") setPassword(value);
+    if (name === "recover_email") setRecoverEmail(value);
   };
 
   const handleLogin = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(email, password);
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!email || !password) {
+      setError(true);
+      setMessage("Email hoặc mật khẩu không được để trống.");
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      setError(true);
+      setMessage("Email không hợp lệ. Vui lòng nhập đúng định dạng.");
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      setError(true);
+      setMessage(
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.",
+      );
+      return;
+    }
+
+    // Nếu đăng nhập thành công
+    setError(false);
+    setMessage("Loading...");
+
+    console.log("Đăng nhập với:", { email, password });
+
+    // Gửi request đăng nhập tại đây
+    console.log("Đăng nhập với:", { email, password });
   };
 
   const handleRecoverPassword = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(email);
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!recoverEmail) {
+      setError(true);
+      setMessage("Email không được để trống.");
+      return;
+    }
+
+    if (!emailRegex.test(recoverEmail)) {
+      setError(true);
+      setMessage("Email không hợp lệ. Vui lòng nhập đúng định dạng.");
+      return;
+    }
+
+    // Nếu gửi yêu cầu thành công
+    setError(false);
+    setMessage("Loading...");
+
+    // Gửi request đặt lại mật khẩu tại đây
+    console.log("Đặt lại mật khẩu với:", { recoverEmail });
   };
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setEmail("");
+    setPassword("");
+    setRecoverEmail("");
+    setError(false);
+    setMessage("");
+  }, [isLogin]);
 
   return (
     <>
@@ -57,8 +122,7 @@ export default function LoginPage() {
                     <form method="post" onSubmit={handleLogin}>
                       <div className="flex flex-col gap-2">
                         <label htmlFor="email">
-                          Email
-                          <span className="text-red-500">*</span>
+                          Email <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="email"
@@ -66,14 +130,13 @@ export default function LoginPage() {
                           id="email"
                           name="email"
                           placeholder="Email"
+                          defaultValue={email}
                           onChange={handleOnChange}
-                          required
                         />
                       </div>
                       <div className="flex flex-col gap-2">
                         <label htmlFor="password">
-                          Mật khẩu
-                          <span className="text-red-500">*</span>
+                          Mật khẩu <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="password"
@@ -81,27 +144,33 @@ export default function LoginPage() {
                           id="password"
                           name="password"
                           placeholder="Mật khẩu"
+                          defaultValue={password}
                           onChange={handleOnChange}
-                          required
                         />
                       </div>
-                      <p>
-                        Quên mật khẩu? Nhấn vào{" "}
-                        <Link
-                          href=""
-                          className="text-[var(--link-color)] hover:opacity-75"
-                          onClick={(e) => setIsLogin(false)}
-                        >
-                          đây
-                        </Link>
-                      </p>
-                      <div className="mt-2 w-full">
+                      <div className="mt-2 mb-2 w-full">
                         <button
                           type="submit"
                           className="btn w-full cursor-pointer rounded-[3px] bg-black text-xl text-white"
                         >
                           Đăng nhập
                         </button>
+                      </div>
+                      {message && (
+                        <div
+                          className={`${error ? "text-left text-red-500" : "text-center text-black"}`}
+                        >
+                          {message}
+                        </div>
+                      )}
+                      <div className="w-full text-right">
+                        <Link
+                          href=""
+                          className="text-[var(--link-color)] hover:opacity-75"
+                          onClick={(e) => setIsLogin(false)}
+                        >
+                          Quên mật khẩu?
+                        </Link>
                       </div>
                     </form>
                   </div>
@@ -112,20 +181,21 @@ export default function LoginPage() {
                         Đặt lại mật khẩu
                       </h2>
                       <div className="flex flex-col gap-2">
-                        <label htmlFor="email" className="mb-2">
+                        <label htmlFor="recover_email" className="mb-2">
                           Chúng tôi sẽ gửi cho bạn một email để kích hoạt việc
                           đặt lại mật khẩu.
                         </label>
                         <input
-                          type="email"
+                          type="recover_email"
                           className="mb-2 h-10 rounded-[3px] border-[1px] border-[#e1e1e1] px-5 leading-10"
-                          id="email"
-                          name="email"
+                          id="recover_email"
+                          name="recover_email"
+                          defaultValue={recoverEmail}
+                          onChange={handleOnChange}
                           placeholder="Email"
-                          required
                         />
                       </div>
-                      <div className="mt-2 w-full">
+                      <div className="mt-2 mb-2 w-full">
                         <button
                           type="submit"
                           className="btn w-full cursor-pointer rounded-[3px] bg-black text-xl text-white"
@@ -133,6 +203,13 @@ export default function LoginPage() {
                           Gửi yêu cầu
                         </button>
                       </div>
+                      {message && (
+                        <div
+                          className={`${error ? "text-left text-red-500" : "text-center text-black"}`}
+                        >
+                          {message}
+                        </div>
+                      )}
                       <p
                         className="mt-2 w-full cursor-pointer text-center hover:text-[var(--link-color)]"
                         onClick={() => setIsLogin(true)}
