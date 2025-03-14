@@ -121,7 +121,7 @@ export default function Header() {
                       <Link
                         href={item.href}
                         title={item.title}
-                        className="header-menu-item relative flex items-center px-[15px] py-[20px] whitespace-nowrap no-underline"
+                        className={`header-menu-item relative flex items-center px-[15px] py-[20px] whitespace-nowrap no-underline ${translateHeader}`}
                       >
                         <span>{item.title}</span>
                         {item?.subMenu && (
