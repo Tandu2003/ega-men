@@ -1,3 +1,4 @@
+import Policy from "@/components/Policy";
 import SlickSlider from "@/components/SlickSlider";
 
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
     <>
       <main className="page-home">
         <SlickSlider />
+        <Policy />
       </main>
     </>
   );

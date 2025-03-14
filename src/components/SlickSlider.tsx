@@ -44,7 +44,7 @@ export default function SlickSlider() {
 
   return (
     <>
-      <section className="section">
+      <section className="section section-slider">
         <div className="container">
           <Slider {...settings}>
             <div>
