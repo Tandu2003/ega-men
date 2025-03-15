@@ -1,29 +1,33 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
+
+import axios from "axios";
 import Link from "next/link";
 
 export default function RegisterPage() {
-  const [last_name, setLastName] = useState("");
-  const [first_name, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
+  const [resetLink, setResetLink] = useState("");
 
   const handleOnChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
-    if (name === "last_name") setLastName(value);
-    if (name === "first_name") setFirstName(value);
+    if (name === "lastName") setLastName(value);
+    if (name === "firstName") setFirstName(value);
     if (name === "phone") setPhone(value);
     if (name === "email") setEmail(value);
     if (name === "password") setPassword(value);
   };
 
-  const handleRegister = (e: { preventDefault: () => void }) => {
+  const handleRegister = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     const nameRegex =
@@ -33,19 +37,19 @@ export default function RegisterPage() {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    if (!last_name || !first_name || !phone || !email || !password) {
+    if (!lastName || !firstName || !phone || !email || !password) {
       setError(true);
       setMessage("Vui lòng nhập đầy đủ thông tin.");
       return;
     }
 
-    if (!nameRegex.test(last_name)) {
+    if (!nameRegex.test(lastName)) {
       setError(true);
       setMessage("Họ không hợp lệ. Vui lòng nhập đúng định dạng.");
       return;
     }
 
-    if (!nameRegex.test(first_name)) {
+    if (!nameRegex.test(firstName)) {
       setError(true);
       setMessage("Tên không hợp lệ. Vui lòng nhập đúng định dạng.");
       return;
@@ -75,13 +79,30 @@ export default function RegisterPage() {
     setMessage("Loading...");
 
     // Gửi request đăng ký tài khoản tại đây
-    console.log("Đăng ký với:", {
-      last_name,
-      first_name,
+    const data = {
+      lastName,
+      firstName,
       phone,
       email,
       password,
-    });
+    };
+
+    try {
+      const response = await axios.post("/api/auth/register", data);
+      setError(false);
+      setResetLink("");
+      setMessage(response.data.message);
+    } catch (error: any) {
+      setError(true);
+      setResetLink(error.response?.data?.resetLink || "");
+      setMessage(error.response?.data?.message || "Đã có lỗi xảy ra.");
+      return;
+    }
+
+    // Nếu đăng ký thành công, hiển thị thông báo và chuyển hướng về trang đăng nhập
+    setTimeout(() => {
+      redirect("/account/login");
+    }, 2000);
   };
 
   useEffect(() => {
@@ -116,30 +137,30 @@ export default function RegisterPage() {
                       Thông tin cá nhân
                     </h2>
                     <div className="flex flex-col gap-2">
-                      <label htmlFor="last_name">
+                      <label htmlFor="lastName">
                         Họ <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         className="mb-2 h-10 rounded-[3px] border-[1px] border-[#e1e1e1] px-5 leading-10"
-                        id="last_name"
-                        name="last_name"
+                        id="lastName"
+                        name="lastName"
                         placeholder="Họ"
-                        defaultValue={last_name}
+                        defaultValue={lastName}
                         onChange={handleOnChange}
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label htmlFor="first_name">
+                      <label htmlFor="firstName">
                         Tên <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         className="mb-2 h-10 rounded-[3px] border-[1px] border-[#e1e1e1] px-5 leading-10"
-                        id="first_name"
-                        name="first_name"
+                        id="firstName"
+                        name="firstName"
                         placeholder="Tên"
-                        defaultValue={first_name}
+                        defaultValue={firstName}
                         onChange={handleOnChange}
                       />
                     </div>
@@ -194,11 +215,19 @@ export default function RegisterPage() {
                       </button>
                     </div>
                     {message && (
-                      <div
+                      <p
                         className={`${error ? "text-left text-red-500" : "text-center text-black"}`}
                       >
-                        {message}
-                      </div>
+                        {message}{" "}
+                        {resetLink && (
+                          <Link
+                            href={resetLink}
+                            className="text-[var(--link-color)]"
+                          >
+                            tại đây.
+                          </Link>
+                        )}
+                      </p>
                     )}
                   </form>
                 </div>

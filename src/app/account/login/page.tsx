@@ -1,8 +1,11 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
+
+import axios from "axios";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -20,7 +23,7 @@ export default function LoginPage() {
     if (name === "recover_email") setRecoverEmail(value);
   };
 
-  const handleLogin = (e: { preventDefault: () => void }) => {
+  const handleLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -47,14 +50,24 @@ export default function LoginPage() {
       return;
     }
 
-    // Nếu đăng nhập thành công
     setError(false);
     setMessage("Loading...");
 
-    console.log("Đăng nhập với:", { email, password });
-
     // Gửi request đăng nhập tại đây
-    console.log("Đăng nhập với:", { email, password });
+    const data = { email, password };
+
+    try {
+      const response = await axios.post("/api/auth/login", data);
+      setError(false);
+      setMessage(response.data.message);
+    } catch (error: any) {
+      setError(true);
+      setMessage(error.response?.data?.message || "Đã xảy ra lỗi.");
+      return;
+    }
+
+    // Nếu đăng nhập thành công, chuyển hướng tới trang chủ
+    redirect("/");
   };
 
   const handleRecoverPassword = (e: { preventDefault: () => void }) => {
@@ -94,6 +107,12 @@ export default function LoginPage() {
     setError(false);
     setMessage("");
   }, [isLogin]);
+
+  useEffect(() => {
+    if (window.location.hash === "#recover") {
+      setIsLogin(false);
+    }
+  }, []);
 
   return (
     <>
@@ -157,17 +176,20 @@ export default function LoginPage() {
                         </button>
                       </div>
                       {message && (
-                        <div
+                        <p
                           className={`${error ? "text-left text-red-500" : "text-center text-black"}`}
                         >
                           {message}
-                        </div>
+                        </p>
                       )}
                       <div className="w-full text-right">
                         <Link
                           href=""
                           className="text-[var(--link-color)] hover:opacity-75"
-                          onClick={(e) => setIsLogin(false)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsLogin(false);
+                          }}
                         >
                           Quên mật khẩu?
                         </Link>
@@ -204,11 +226,11 @@ export default function LoginPage() {
                         </button>
                       </div>
                       {message && (
-                        <div
+                        <p
                           className={`${error ? "text-left text-red-500" : "text-center text-black"}`}
                         >
                           {message}
-                        </div>
+                        </p>
                       )}
                       <p
                         className="mt-2 w-full cursor-pointer text-center hover:text-[var(--link-color)]"
