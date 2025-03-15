@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, redirect } from "next/navigation";
+import { useRouter, redirect, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import axios from "axios";
@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useUser } from "@/context/UserContext";
 
 export default function Header() {
-  const router = useRouter();
+  const pathname = usePathname();
   const { user, setUser, isAuthenticated, setIsAuthenticated, loading } =
     useUser();
 
@@ -79,6 +79,17 @@ export default function Header() {
     } catch (error) {
       console.error("Error logging out", error);
     }
+    setOpenMenuMobile(false);
+  };
+
+  const handleMenuClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    if (pathname === href) {
+      e.preventDefault();
+    }
+    setOpenMenuMobile(false);
   };
 
   useEffect(() => {
@@ -95,6 +106,10 @@ export default function Header() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    setOpenMenuMobile(false);
+  }, [pathname]);
 
   if (loading) return null;
 
@@ -199,8 +214,9 @@ export default function Header() {
                   height={24}
                 />
               </span>
-              <div
-                className="group relative cursor-pointer max-[767px]:hidden"
+              <Link
+                href={isAuthenticated ? "/account" : "/account/login"}
+                className="max-[767px]:hidden"
                 title="Tài khoản"
               >
                 <div className="text-[32px]">
@@ -211,41 +227,7 @@ export default function Header() {
                     height={24}
                   />
                 </div>
-                <div className="dropdown-account pointer-events-none absolute top-[calc(100%+10px)] left-1/2 w-[95px] -translate-x-1/2 rounded-[5px] bg-[#333] text-white opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
-                  {isAuthenticated ? (
-                    <>
-                      <Link
-                        href="/account"
-                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                      >
-                        Tài khoản
-                      </Link>
-                      <Link
-                        href="/account/logout"
-                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                        onClick={handleLogout}
-                      >
-                        Đăng xuất
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        href="/account/login"
-                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                      >
-                        Đăng nhập
-                      </Link>
-                      <Link
-                        href="/account/register"
-                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                      >
-                        Đăng ký
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </div>
+              </Link>
               <Link href="/pages/wishlist" title="Sản phẩm yêu thích">
                 <span className="relative">
                   <Image
@@ -290,7 +272,11 @@ export default function Header() {
             <div className="ml-[10px] flex flex-col">
               {isAuthenticated ? (
                 <>
-                  <Link href="/account" className="font-bold">
+                  <Link
+                    href="/account"
+                    className="font-bold"
+                    onClick={(e) => handleMenuClick(e, "/account")}
+                  >
                     {`${user?.firstName} ${user?.lastName}`}
                   </Link>
                   <Link
@@ -307,6 +293,7 @@ export default function Header() {
                   <Link
                     href="/account/login"
                     className="text-[80%] font-normal"
+                    onClick={(e) => handleMenuClick(e, "/account/login")}
                   >
                     Đăng nhập
                   </Link>
@@ -326,6 +313,7 @@ export default function Header() {
                       href={item.href}
                       title={item.title}
                       className="relative flex items-center justify-between p-[10px_15px] whitespace-nowrap"
+                      onClick={(e) => handleMenuClick(e, item.href)}
                     >
                       <span>{item.title}</span>
                       {item?.subMenu && (
@@ -350,6 +338,7 @@ export default function Header() {
                 href="tel:19001393"
                 title="19001393"
                 className="flex items-center justify-center gap-1.5 text-sky-600"
+                onClick={() => setOpenMenuMobile(false)}
               >
                 <span>Gọi điện</span>
                 <Image
@@ -365,6 +354,7 @@ export default function Header() {
                 href="tel:19001393"
                 title="19001393"
                 className="flex items-center justify-center gap-1.5 text-sky-600"
+                onClick={() => setOpenMenuMobile(false)}
               >
                 <span>Nhắn tin</span>
                 <Image
