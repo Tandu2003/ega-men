@@ -1,5 +1,6 @@
 "use client";
 
+import Collection from "@/components/collection";
 import Loading from "@/components/Loading";
 import Policy from "@/components/Policy";
 import SlickSlider from "@/components/SlickSlider";
@@ -16,6 +17,7 @@ export default function Home() {
         <main className="page-home">
           <SlickSlider />
           <Policy />
+          <Collection />
         </main>
       )}
     </>
