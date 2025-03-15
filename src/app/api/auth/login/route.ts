@@ -46,6 +46,7 @@ export async function POST(req: Request) {
   const response = NextResponse.json({
     message: "Đăng nhập thành công!",
     token,
+    user,
   });
 
   response.cookies.set("token", token, {

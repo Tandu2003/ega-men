@@ -1,14 +1,19 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
+import { useUser } from "@/context/UserContext";
 
 import axios from "axios";
 import Link from "next/link";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { setUser, isAuthenticated, setIsAuthenticated, loading } = useUser();
+  const [checking, setChecking] = useState(true);
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +28,7 @@ export default function LoginPage() {
     if (name === "recover_email") setRecoverEmail(value);
   };
 
-  const handleLogin = async (e: { preventDefault: () => void }) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -59,6 +64,7 @@ export default function LoginPage() {
     try {
       const response = await axios.post("/api/auth/login", data);
       setError(false);
+      setUser(response.data.user);
       setMessage(response.data.message);
     } catch (error: any) {
       setError(true);
@@ -66,8 +72,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Nếu đăng nhập thành công, chuyển hướng tới trang chủ
-    redirect("/");
+    setIsAuthenticated(true);
   };
 
   const handleRecoverPassword = (e: { preventDefault: () => void }) => {
@@ -113,6 +118,18 @@ export default function LoginPage() {
       setIsLogin(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      if (isAuthenticated) {
+        redirect("/account");
+      } else {
+        setChecking(false);
+      }
+    }
+  }, [isAuthenticated, loading]);
+
+  if (checking) return null;
 
   return (
     <>

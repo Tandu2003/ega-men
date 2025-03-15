@@ -5,6 +5,8 @@ import "@/styles/globals.css";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { UserProvider } from "@/context/UserContext";
+import Loading from "@/components/Loading";
 
 export const metadata: Metadata = {
   title: "EGA Men Style",
@@ -20,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white text-black" cz-shortcut-listen="true">
-        <TopBar />
-        <Header />
-        {children}
-        <Footer />
+        <UserProvider>
+          <TopBar />
+          <Header />
+          {children}
+          <Footer />
+        </UserProvider>
       </body>
     </html>
   );

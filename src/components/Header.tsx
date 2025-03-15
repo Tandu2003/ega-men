@@ -1,11 +1,19 @@
 "use client";
 
+import { useRouter, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 
+import { useUser } from "@/context/UserContext";
+
 export default function Header() {
+  const router = useRouter();
+  const { user, setUser, isAuthenticated, setIsAuthenticated, loading } =
+    useUser();
+
   const headerMenu = [
     {
       title: "Trang chủ",
@@ -43,12 +51,6 @@ export default function Header() {
     },
   ];
 
-  const userData = {
-    email: "tandu542003@gmail.com",
-    firstName: "Tấn Dự",
-    lastName: "Nguyễn",
-  };
-
   const [translateHeader, setTranslateHeader] = useState("translate-y-0");
   const [openMenuMobile, setOpenMenuMobile] = useState(false);
 
@@ -67,8 +69,16 @@ export default function Header() {
     setOpenMenuMobile(true);
   };
 
-  const handleLogout = () => {
-    alert("Đăng xuất thành công");
+  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    try {
+      await axios.post("/api/auth/logout");
+      setUser(null);
+      setIsAuthenticated(false);
+      redirect("/");
+    } catch (error) {
+      console.error("Error logging out", error);
+    }
   };
 
   useEffect(() => {
@@ -85,6 +95,8 @@ export default function Header() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  if (loading) return null;
 
   return (
     <>
@@ -200,18 +212,38 @@ export default function Header() {
                   />
                 </div>
                 <div className="dropdown-account pointer-events-none absolute top-[calc(100%+10px)] left-1/2 w-[95px] -translate-x-1/2 rounded-[5px] bg-[#333] text-white opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
-                  <Link
-                    href="/account/login"
-                    className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                  >
-                    Đăng nhập
-                  </Link>
-                  <Link
-                    href="/account/register"
-                    className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                  >
-                    Đăng ký
-                  </Link>
+                  {isAuthenticated ? (
+                    <>
+                      <Link
+                        href="/account"
+                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                      >
+                        Tài khoản
+                      </Link>
+                      <Link
+                        href="/account/logout"
+                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                        onClick={handleLogout}
+                      >
+                        Đăng xuất
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/account/login"
+                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                      >
+                        Đăng nhập
+                      </Link>
+                      <Link
+                        href="/account/register"
+                        className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                      >
+                        Đăng ký
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
               <Link href="/pages/wishlist" title="Sản phẩm yêu thích">
@@ -256,9 +288,11 @@ export default function Header() {
               height={42}
             />
             <div className="ml-[10px] flex flex-col">
-              {userData ? (
+              {isAuthenticated ? (
                 <>
-                  <span>{`${userData.firstName} ${userData.lastName}`}</span>
+                  <Link href="/account" className="font-bold">
+                    {`${user?.firstName} ${user?.lastName}`}
+                  </Link>
                   <Link
                     href="/"
                     onClick={handleLogout}

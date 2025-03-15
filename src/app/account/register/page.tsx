@@ -1,14 +1,19 @@
 "use client";
 
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, redirect } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
+import { useUser } from "@/context/UserContext";
 
 import axios from "axios";
 import Link from "next/link";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { isAuthenticated, loading } = useUser();
+  const [checking, setChecking] = useState(true);
+
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,7 +23,7 @@ export default function RegisterPage() {
   const [message, setMessage] = useState("");
   const [resetLink, setResetLink] = useState("");
 
-  const handleOnChange = (e: { target: { name: string; value: string } }) => {
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "lastName") setLastName(value);
     if (name === "firstName") setFirstName(value);
@@ -27,7 +32,7 @@ export default function RegisterPage() {
     if (name === "password") setPassword(value);
   };
 
-  const handleRegister = async (e: { preventDefault: () => void }) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const nameRegex =
@@ -108,6 +113,18 @@ export default function RegisterPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      if (isAuthenticated) {
+        redirect("/account");
+      } else {
+        setChecking(false);
+      }
+    }
+  }, [isAuthenticated, loading]);
+
+  if (checking) return null;
 
   return (
     <>
