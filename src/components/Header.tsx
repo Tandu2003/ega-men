@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, redirect, usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import axios from "axios";
@@ -9,12 +9,29 @@ import Link from "next/link";
 
 import { useUser } from "@/context/UserContext";
 
+interface HeaderMenu {
+  title: string;
+  href: string;
+  subMenu?: HeaderSubMenu[];
+}
+
+interface HeaderSubMenu {
+  title: string;
+  href: string;
+  items?: HeaderSubMenuItems[];
+}
+
+interface HeaderSubMenuItems {
+  title: string;
+  href: string;
+}
+
 export default function Header() {
   const pathname = usePathname();
   const { user, setUser, isAuthenticated, setIsAuthenticated, loading } =
     useUser();
 
-  const headerMenu = [
+  const headerMenu: HeaderMenu[] = [
     {
       title: "Trang chủ",
       href: "/",
@@ -22,12 +39,126 @@ export default function Header() {
     {
       title: "Sản phẩm",
       href: "/collections/all",
-      subMenu: [],
+      subMenu: [
+        {
+          title: "Bộ sưu tập",
+          href: "/collections/all",
+          items: [
+            {
+              title: "Áo khoác",
+              href: "/collections/ao-khoac",
+            },
+            {
+              title: "Áo sơ mi",
+              href: "/collections/ao-so-mi",
+            },
+            {
+              title: "Áo thun",
+              href: "/collections/ao-thun",
+            },
+            {
+              title: "Quần dài",
+              href: "/collections/quan-dai",
+            },
+            {
+              title: "Quần jeans",
+              href: "/collections/quan-jeans",
+            },
+            {
+              title: "Quần short",
+              href: "/collections/quan-short",
+            },
+          ],
+        },
+        {
+          title: "Mặc theo dịp",
+          href: "/collections/all",
+          items: [
+            {
+              title: "Dạo phố",
+              href: "/collections/dao-pho",
+            },
+            {
+              title: "Đi biển",
+              href: "/collections/di-bien",
+            },
+            {
+              title: "Du lịch",
+              href: "/collections/du-lich",
+            },
+            {
+              title: "Đi chơi",
+              href: "/collections/di-choi",
+            },
+          ],
+        },
+        {
+          title: "Áo nam thời trang",
+          href: "/collections/hot-products",
+          items: [
+            {
+              title: "Áo thể thao",
+              href: "/collections/ao-the-thao",
+            },
+            {
+              title: "Áo sơ mi",
+              href: "/collections/ao-so-mi",
+            },
+            {
+              title: "Áo khoác",
+              href: "/collections/ao-khoac",
+            },
+            {
+              title: "Áo thun",
+              href: "/collections/ao-thun",
+            },
+          ],
+        },
+        {
+          title: "Đồ mặc nhà",
+          href: "/collections/hot-products",
+          items: [
+            {
+              title: "Đồ dài",
+              href: "/collections/do-dai",
+            },
+            {
+              title: "Đồ ngắn",
+              href: "/collections/do-ngan",
+            },
+            {
+              title: "Đồ xuân - hè",
+              href: "/collections/do-xuan-he",
+            },
+            {
+              title: "Đồ thu - đông",
+              href: "/collections/do-thu-dong",
+            },
+          ],
+        },
+      ],
     },
     {
       title: "Chương trình khuyến mãi",
       href: "/collections/all",
-      subMenu: [],
+      subMenu: [
+        {
+          title: "Landing Page - XMas",
+          href: "/pages/landing-page-xmas",
+        },
+        {
+          title: "Landing Page - Black Friday",
+          href: "/pages/landing-page-black-friday",
+        },
+        {
+          title: "Landing Page - OnePage",
+          href: "/pages/landing-page-onepage",
+        },
+        {
+          title: "Landing Page - Flash Sale",
+          href: "/pages/landing-page-flash-sale",
+        },
+      ],
     },
     {
       title: "Hệ thống cửa hàng",
@@ -53,6 +184,8 @@ export default function Header() {
 
   const [translateHeader, setTranslateHeader] = useState("translate-y-0");
   const [openMenuMobile, setOpenMenuMobile] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hasMouse, setHasMouse] = useState(false);
 
   const countWishlist = 0;
   const countCart = 0;
@@ -92,6 +225,12 @@ export default function Header() {
     setOpenMenuMobile(false);
   };
 
+  const toggleDropdown = () => {
+    if (!hasMouse) {
+      setIsDropdownOpen((prev) => !prev);
+    }
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 992) {
@@ -109,7 +248,24 @@ export default function Header() {
 
   useEffect(() => {
     setOpenMenuMobile(false);
+    setIsDropdownOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: hover)");
+    setHasMouse(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setHasMouse(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    setIsDropdownOpen(false);
+  }, [hasMouse]);
 
   if (loading) return null;
 
@@ -162,6 +318,68 @@ export default function Header() {
                           </span>
                         )}
                       </Link>
+                      {item?.subMenu && (
+                        <div
+                          className={`pointer-events-none absolute top-[calc(100%-2.5px)] z-[1000] border-t border-[#f1f1f1] bg-white p-[14px_20px] opacity-0 shadow-xl transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100 ${
+                            item.subMenu.some(
+                              (subItem) => subItem.items?.length,
+                            )
+                              ? "left-0 h-80 w-full"
+                              : "left-[initial] h-auto w-80"
+                          }`}
+                        >
+                          <div className="container">
+                            <ul
+                              className={`grid gap-[5px] ${
+                                item.subMenu.some(
+                                  (subItem) => subItem.items?.length,
+                                )
+                                  ? "grid-cols-4"
+                                  : "grid-cols-1"
+                              }`}
+                            >
+                              {item.subMenu.map((subItem, subIndex) => (
+                                <li key={subIndex} className="flex flex-col">
+                                  <Link
+                                    href={subItem.href}
+                                    title={subItem.title}
+                                    className={`mb-1 hover:text-[var(--link-color)] ${
+                                      subItem.items?.length ? "font-bold" : "font-normal"
+                                    }`}
+                                    onClick={(e) =>
+                                      handleMenuClick(e, subItem.href)
+                                    }
+                                  >
+                                    {subItem.title}
+                                  </Link>
+                                  {subItem?.items && (
+                                    <>
+                                      {subItem.items.map(
+                                        (subMenuItem, subMenuItemIndex) => (
+                                          <Link
+                                            key={subMenuItemIndex}
+                                            href={subMenuItem.href}
+                                            title={subMenuItem.title}
+                                            className="mb-1 text-[#666666] hover:text-[var(--link-color)]"
+                                            onClick={(e) =>
+                                              handleMenuClick(
+                                                e,
+                                                subMenuItem.href,
+                                              )
+                                            }
+                                          >
+                                            {subMenuItem.title}
+                                          </Link>
+                                        ),
+                                      )}
+                                    </>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -214,10 +432,10 @@ export default function Header() {
                   height={24}
                 />
               </span>
-              <Link
-                href={isAuthenticated ? "/account" : "/account/login"}
-                className="max-[767px]:hidden"
+              <div
+                className="group relative cursor-pointer max-[767px]:hidden"
                 title="Tài khoản"
+                onClick={toggleDropdown}
               >
                 <div className="text-[32px]">
                   <Image
@@ -226,8 +444,56 @@ export default function Header() {
                     width={24}
                     height={24}
                   />
+                  <div
+                    className={`dropdown-account pointer-events-none absolute top-[calc(100%+10px)] left-1/2 w-[95px] -translate-x-1/2 rounded-[5px] bg-[#333] text-white transition-all duration-300 ${
+                      hasMouse
+                        ? "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
+                        : isDropdownOpen
+                          ? "pointer-events-auto opacity-100"
+                          : "opacity-0"
+                    }`}
+                  >
+                    {" "}
+                    {isAuthenticated ? (
+                      <>
+                        <Link
+                          href="/account"
+                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                          onClick={(e) => handleMenuClick(e, "/account")}
+                        >
+                          Tài khoản
+                        </Link>
+                        <Link
+                          href="/account/logout"
+                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                          onClick={handleLogout}
+                        >
+                          Đăng xuất
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href="/account/login"
+                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                          onClick={(e) => handleMenuClick(e, "/account/login")}
+                        >
+                          Đăng nhập
+                        </Link>
+                        <Link
+                          href="/account/register"
+                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                          onClick={(e) =>
+                            handleMenuClick(e, "/account/register")
+                          }
+                        >
+                          Đăng ký
+                        </Link>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </Link>
+              </div>
               <Link href="/pages/wishlist" title="Sản phẩm yêu thích">
                 <span className="relative">
                   <Image
