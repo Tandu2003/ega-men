@@ -1,9 +1,9 @@
 "use client";
 
-import Collection from "@/components/collection";
+import ProductCategories from "@/components/ProductCategories";
 import Loading from "@/components/Loading";
 import Policy from "@/components/Policy";
-import SlickSlider from "@/components/SlickSlider";
+import SwiperSlider from "@/components/SwiperSlider";
 import { useUser } from "@/context/UserContext";
 
 export default function Home() {
@@ -15,9 +15,9 @@ export default function Home() {
         <Loading />
       ) : (
         <main className="page-home">
-          <SlickSlider />
+          <SwiperSlider />
           <Policy />
-          <Collection />
+          <ProductCategories />
         </main>
       )}
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
 import Image from "next/image";
@@ -186,6 +186,13 @@ export default function Header() {
   const [openMenuMobile, setOpenMenuMobile] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hasMouse, setHasMouse] = useState(false);
+  const [openMenus, setOpenMenus] = useState<{ [key: number]: boolean }>({});
+  const [openSubMenus, setOpenSubMenus] = useState<{ [key: number]: boolean }>(
+    {},
+  );
+
+  const menuRefs = useRef<{ [key: number]: HTMLUListElement | null }>({});
+  const subMenuRefs = useRef<{ [key: number]: HTMLUListElement | null }>({});
 
   const countWishlist = 0;
   const countCart = 0;
@@ -264,10 +271,85 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        document.querySelector("header")?.classList.add("shadow-md");
+      } else {
+        document.querySelector("header")?.classList.remove("shadow-md");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
     setIsDropdownOpen(false);
   }, [hasMouse]);
 
-  if (loading) return null;
+  useEffect(() => {
+    if (openMenuMobile) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [openMenuMobile]);
+
+  const toggleMenu = (e: React.MouseEvent<HTMLSpanElement>, index: number) => {
+    e.preventDefault();
+    setOpenMenus((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const toggleSubMenu = (
+    e: React.MouseEvent<HTMLSpanElement>,
+    index: number,
+  ) => {
+    e.preventDefault();
+    setOpenSubMenus((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  useEffect(() => {
+    interface Refs {
+      current: { [key: number]: HTMLUListElement | null };
+    }
+
+    interface State {
+      [key: number]: boolean;
+    }
+
+    const updateHeight = (refs: Refs, state: State) => {
+      Object.keys(refs.current).forEach((key) => {
+        const menu = refs.current[Number(key)];
+        if (menu) {
+          const isOpen = state[Number(key)];
+          let totalHeight = isOpen ? menu.scrollHeight : 0;
+
+          // Nếu có submenu mở, cộng thêm chiều cao của nó
+          const subMenus = menu.querySelectorAll("ul");
+          subMenus.forEach((sub) => {
+            if (sub.scrollHeight) {
+              totalHeight += sub.scrollHeight;
+            }
+          });
+
+          menu.style.maxHeight = isOpen ? `${totalHeight}px` : "0px";
+        }
+      });
+    };
+
+    updateHeight(menuRefs, openMenus);
+    updateHeight(subMenuRefs, openSubMenus);
+  }, [openMenus, openSubMenus]);
 
   return (
     <>
@@ -344,7 +426,9 @@ export default function Header() {
                                     href={subItem.href}
                                     title={subItem.title}
                                     className={`mb-1 hover:text-[var(--link-color)] ${
-                                      subItem.items?.length ? "font-bold" : "font-normal"
+                                      subItem.items?.length
+                                        ? "font-bold"
+                                        : "font-normal"
                                     }`}
                                     onClick={(e) =>
                                       handleMenuClick(e, subItem.href)
@@ -453,42 +537,47 @@ export default function Header() {
                           : "opacity-0"
                     }`}
                   >
-                    {" "}
-                    {isAuthenticated ? (
+                    {loading ? null : (
                       <>
-                        <Link
-                          href="/account"
-                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                          onClick={(e) => handleMenuClick(e, "/account")}
-                        >
-                          Tài khoản
-                        </Link>
-                        <Link
-                          href="/account/logout"
-                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                          onClick={handleLogout}
-                        >
-                          Đăng xuất
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          href="/account/login"
-                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                          onClick={(e) => handleMenuClick(e, "/account/login")}
-                        >
-                          Đăng nhập
-                        </Link>
-                        <Link
-                          href="/account/register"
-                          className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
-                          onClick={(e) =>
-                            handleMenuClick(e, "/account/register")
-                          }
-                        >
-                          Đăng ký
-                        </Link>
+                        {isAuthenticated ? (
+                          <>
+                            <Link
+                              href="/account"
+                              className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                              onClick={(e) => handleMenuClick(e, "/account")}
+                            >
+                              Tài khoản
+                            </Link>
+                            <Link
+                              href="/account/logout"
+                              className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                              onClick={handleLogout}
+                            >
+                              Đăng xuất
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              href="/account/login"
+                              className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                              onClick={(e) =>
+                                handleMenuClick(e, "/account/login")
+                              }
+                            >
+                              Đăng nhập
+                            </Link>
+                            <Link
+                              href="/account/register"
+                              className="block p-[7px_8px] text-[14px] hover:rounded-[5px] hover:bg-[#666]"
+                              onClick={(e) =>
+                                handleMenuClick(e, "/account/register")
+                              }
+                            >
+                              Đăng ký
+                            </Link>
+                          </>
+                        )}
                       </>
                     )}
                   </div>
@@ -535,7 +624,7 @@ export default function Header() {
               width={42}
               height={42}
             />
-            <div className="ml-[10px] flex flex-col">
+            <div className="ml-2.5 flex flex-col">
               {isAuthenticated ? (
                 <>
                   <Link
@@ -567,7 +656,7 @@ export default function Header() {
               )}
             </div>
           </div>
-          <div className="overflow-y-auto">
+          <div className="max-h-[calc(100%-68px)] overflow-y-auto">
             <nav className="block">
               <ul className="max-h-auto flex w-full max-w-full flex-col flex-wrap overflow-x-auto">
                 {headerMenu.map((item, index) => (
@@ -575,15 +664,20 @@ export default function Header() {
                     key={index}
                     className="[position:initial] border-b-0 bg-transparent p-0"
                   >
-                    <Link
-                      href={item.href}
-                      title={item.title}
-                      className="relative flex items-center justify-between p-[10px_15px] whitespace-nowrap"
-                      onClick={(e) => handleMenuClick(e, item.href)}
-                    >
-                      <span>{item.title}</span>
+                    <span className="relative flex w-full items-center justify-between p-[10px_15px] whitespace-nowrap">
+                      <Link
+                        href={item.href}
+                        title={item.title}
+                        onClick={(e) => handleMenuClick(e, item.href)}
+                        className="w-full text-left"
+                      >
+                        {item.title}
+                      </Link>
                       {item?.subMenu && (
-                        <span className="ml-[5px] -rotate-90">
+                        <span
+                          className={`ml-[5px] transition-transform duration-300 ${openMenus[index] ? "rotate-0" : "-rotate-90"}`}
+                          onClick={(e) => toggleMenu(e, index)}
+                        >
                           <Image
                             src="/svg/arrowdown.svg"
                             alt="arrow-down"
@@ -592,7 +686,80 @@ export default function Header() {
                           />
                         </span>
                       )}
-                    </Link>
+                    </span>
+                    {item?.subMenu && (
+                      <>
+                        <ul
+                          ref={(el) => {
+                            if (el) menuRefs.current[index] = el;
+                          }}
+                          className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+                          style={{ maxHeight: "0px" }}
+                        >
+                          {item.subMenu.map((subItem, subIndex) => (
+                            <li
+                              key={subIndex}
+                              className={`${openMenus[index] ? "flex flex-col" : "hidden"}`}
+                            >
+                              <span className="flex items-center justify-between p-[10px_15px] hover:text-[var(--link-color)]">
+                                <Link
+                                  href={subItem.href}
+                                  title={subItem.title}
+                                  onClick={(e) =>
+                                    handleMenuClick(e, subItem.href)
+                                  }
+                                  className="w-full text-left"
+                                >
+                                  {subItem.title}
+                                </Link>
+                                {subItem?.items && (
+                                  <span
+                                    className={`ml-[5px] transition-transform duration-300 ${openSubMenus[subIndex] ? "rotate-0" : "-rotate-90"}`}
+                                    onClick={(e) => toggleSubMenu(e, subIndex)}
+                                  >
+                                    <Image
+                                      src="/svg/arrowdown.svg"
+                                      alt="arrow-down"
+                                      width={16}
+                                      height={16}
+                                    />
+                                  </span>
+                                )}
+                              </span>
+                              {subItem?.items && (
+                                <ul
+                                  ref={(el) => {
+                                    if (el) subMenuRefs.current[subIndex] = el;
+                                  }}
+                                  className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+                                  style={{ maxHeight: "0px" }}
+                                >
+                                  {subItem.items.map(
+                                    (subMenuItem, subMenuItemIndex) => (
+                                      <li
+                                        key={subMenuItemIndex}
+                                        className={`${openSubMenus[subIndex] ? "flex" : "hidden"}`}
+                                      >
+                                        <Link
+                                          href={subMenuItem.href}
+                                          title={subMenuItem.title}
+                                          onClick={(e) =>
+                                            handleMenuClick(e, subMenuItem.href)
+                                          }
+                                          className="p-[10px_15px] hover:text-[var(--link-color)]"
+                                        >
+                                          {subMenuItem.title}
+                                        </Link>
+                                      </li>
+                                    ),
+                                  )}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -628,6 +795,7 @@ export default function Header() {
                   alt="messenger"
                   width={20}
                   height={20}
+                  className=""
                 />
               </Link>
             </div>

@@ -179,36 +179,6 @@ body {
   content: "";
 }
 
-/* .submenu {
-  display: none;
-  position: absolute;
-  top: calc(100%-2.5px);
-  bottom: 0px;
-  left: 0;
-  z-index: 1;
-  margin-left: 0px;
-  box-shadow: rgba(0, 0, 0, 0.06) 0px 5px 8px 0px;
-  border-radius: 0px;
-  background: #fff;
-  padding: 14px 20px;
-  width: 100%;
-  height: 320px;
-  overflow: auto;
-  font-size: 1rem;
-}
-
-.submenu.default {
-  bottom: initial;
-  left: inherit;
-  width: 250px;
-  height: auto;
-}
-
-.group:hover .submenu {
-  display: block;
-  z-index: 900;
-} */
-
 /* addThis_Sharing */
 .tooltip-text {
   position: absolute;
