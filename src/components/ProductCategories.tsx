@@ -60,9 +60,8 @@ export default function ProductCategories() {
 
   return (
     <section className="section section-collection overflow-hidden">
-      <div className="container">
+      <div className="container p-4">
         <h2 className="text-center text-[2rem] font-normal">Thời trang EGA</h2>
-
         <Swiper
           modules={[Scrollbar]}
           scrollbar={{ draggable: true, el: ".custom-scrollbar" }}
@@ -76,7 +75,7 @@ export default function ProductCategories() {
           {collection.map((item, index) => (
             <SwiperSlide key={index}>
               <Link href={item.href} className="block">
-                <div className="p-4 transition-transform duration-500 ease-out hover:scale-110">
+                <div className="p-[30px_15px] transition-transform duration-500 ease-out hover:scale-110">
                   <Image
                     src={item.image}
                     alt={item.title}
