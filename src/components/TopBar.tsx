@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function TopBar() {
+  const [mounted, setMounted] = useState(false);
   const [close, setClose] = useState(false);
   const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleClose = () => {
     setClose(true);
@@ -15,14 +20,14 @@ export default function TopBar() {
     }, 500);
   };
 
-  if (hidden) return null;
+  if (!mounted || hidden) return null;
 
   return (
     <motion.div
       className="top-banner relative bg-[#81AACC]"
-      initial={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: -50 }}
       animate={close ? { opacity: 0, y: -50 } : { opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       exit={{ opacity: 0, y: -50 }}
     >
       <div className="container px-0 text-center">
