@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -43,23 +44,29 @@ export default function ProductCategories() {
   ];
 
   const scrollbarRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Hiển thị thanh cuộn
-  const showScrollbar = () => {
-    if (scrollbarRef.current) {
-      scrollbarRef.current.classList.remove("opacity-0");
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => {
-        if (scrollbarRef.current) {
-          scrollbarRef.current.classList.add("opacity-0");
-        }
-      }, 500);
-    }
-  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.2 },
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="section section-collection overflow-hidden">
+    <motion.section
+      ref={sectionRef}
+      className="section section-collection overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isVisible ? 1 : 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="container p-4">
         <h2 className="text-center text-[2rem] font-normal">Thời trang EGA</h2>
         <Swiper
@@ -70,12 +77,19 @@ export default function ProductCategories() {
             768: { slidesPerView: 4 },
             0: { slidesPerView: 2.5 },
           }}
-          onTouchMove={showScrollbar}
         >
           {collection.map((item, index) => (
             <SwiperSlide key={index}>
               <Link href={item.href} className="block">
-                <div className="p-[30px_15px] transition-transform duration-500 ease-out hover:scale-110">
+                <motion.div
+                  className="p-[30px_15px] transition-transform duration-500 ease-out hover:scale-110"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: isVisible ? 1 : 0,
+                    y: isVisible ? 0 : 20,
+                  }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
                   <Image
                     src={item.image}
                     alt={item.title}
@@ -87,7 +101,7 @@ export default function ProductCategories() {
                     <h5 className="text-lg font-bold">{item.title}</h5>
                     <p className="text-sm text-[#888]">0 sản phẩm</p>
                   </div>
-                </div>
+                </motion.div>
               </Link>
             </SwiperSlide>
           ))}
@@ -96,9 +110,11 @@ export default function ProductCategories() {
         {/* Thanh cuộn tùy chỉnh */}
         <div
           ref={scrollbarRef}
-          className="custom-scrollbar relative mt-3 h-1 w-full rounded-full bg-transparent opacity-0 transition-opacity duration-300"
+          className={`custom-scrollbar relative mt-3 h-1 w-full rounded-full bg-gray-300 transition-opacity duration-300 ${
+            isVisible ? "opacity-100" : "opacity-0"
+          }`}
         ></div>
       </div>
-    </section>
+    </motion.section>
   );
 }

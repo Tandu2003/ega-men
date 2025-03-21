@@ -2,6 +2,7 @@
 
 import { useRouter, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import { useUser } from "@/context/UserContext";
@@ -41,12 +42,22 @@ export default function AccountPage() {
   if (checking) return null;
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+    >
       <Breadcrumb items={[{ label: "Tài khoản" }]} />
       <section className="section page-account">
         <div className="container p-4">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_3fr]">
-            <div className="sticky top-4 flex flex-col border-b-[10px] border-b-[#f4f4f4] pb-5 md:mr-5 md:border-r-2 md:border-b-0 md:border-r-[#f4f4f4] md:pb-0">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              className="sticky top-4 flex flex-col border-b-[10px] border-b-[#f4f4f4] pb-5 md:mr-5 md:border-r-2 md:border-b-0 md:border-r-[#f4f4f4] md:pb-0"
+            >
               <h5 className="mb-4 text-xl font-normal text-[#212b25] uppercase">
                 Trang tài khoản
               </h5>
@@ -88,8 +99,13 @@ export default function AccountPage() {
                   </Link>
                 </li>
               </ul>
-            </div>
-            <div className="flex flex-col pt-5 md:mx-5 md:pt-0">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col pt-5 md:mx-5 md:pt-0"
+            >
               <div className="">
                 <h5 className="text-2xl font-normal uppercase">Tài khoản</h5>
                 <p className="mt-5">
@@ -119,10 +135,10 @@ export default function AccountPage() {
                   </Link>
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
-    </>
+    </motion.div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { redirect, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 import axios from "axios";
 import Image from "next/image";
@@ -238,6 +239,16 @@ export default function Header() {
     }
   };
 
+  const menuVariants = {
+    open: { opacity: 1, height: "auto", y: 0, transition: { duration: 0.3 } },
+    closed: { opacity: 0, height: 0, y: -10, transition: { duration: 0.3 } },
+  };
+
+  const subMenuVariants = {
+    open: { opacity: 1, height: "auto", y: 0, transition: { duration: 0.3 } },
+    closed: { opacity: 0, height: 0, y: -10, transition: { duration: 0.3 } },
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 992) {
@@ -386,6 +397,7 @@ export default function Header() {
                       <Link
                         href={item.href}
                         title={item.title}
+                        onClick={(e) => handleMenuClick(e, item.href)}
                         className={`header-menu-item relative flex items-center px-[15px] py-[20px] whitespace-nowrap no-underline ${translateHeader}`}
                       >
                         <span>{item.title}</span>
@@ -614,8 +626,12 @@ export default function Header() {
         </div>
 
         {/* Menu for mobile */}
-        <div
-          className={`fixed top-0 left-0 z-[9999] h-full w-[300px] overflow-y-auto bg-white transition-transform duration-300 ${openMenuMobile ? "translate-x-0" : "-translate-x-full"}`}
+        <motion.div
+          initial={{ x: "-100%" }}
+          animate={{ x: openMenuMobile ? "0" : "-100%" }}
+          exit={{ x: "-100%" }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="fixed top-0 left-0 z-[9999] h-full w-[300px] bg-white shadow-lg"
         >
           <div className="flex items-center bg-[var(--primary-color)] p-[10px_15px] text-white">
             <Image
@@ -688,77 +704,69 @@ export default function Header() {
                       )}
                     </span>
                     {item?.subMenu && (
-                      <>
-                        <ul
-                          ref={(el) => {
-                            if (el) menuRefs.current[index] = el;
-                          }}
-                          className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-                          style={{ maxHeight: "0px" }}
-                        >
-                          {item.subMenu.map((subItem, subIndex) => (
-                            <li
-                              key={subIndex}
-                              className={`${openMenus[index] ? "flex flex-col" : "hidden"}`}
-                            >
-                              <span className="flex items-center justify-between p-[10px_15px] hover:text-[var(--link-color)]">
-                                <Link
-                                  href={subItem.href}
-                                  title={subItem.title}
-                                  onClick={(e) =>
-                                    handleMenuClick(e, subItem.href)
-                                  }
-                                  className="w-full text-left"
-                                >
-                                  {subItem.title}
-                                </Link>
-                                {subItem?.items && (
-                                  <span
-                                    className={`ml-[5px] transition-transform duration-300 ${openSubMenus[subIndex] ? "rotate-0" : "-rotate-90"}`}
-                                    onClick={(e) => toggleSubMenu(e, subIndex)}
-                                  >
-                                    <Image
-                                      src="/svg/arrowdown.svg"
-                                      alt="arrow-down"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </span>
-                                )}
-                              </span>
+                      <motion.ul
+                        variants={menuVariants}
+                        initial="closed"
+                        animate={openMenus[index] ? "open" : "closed"}
+                        className="overflow-hidden"
+                      >
+                        {item.subMenu.map((subItem, subIndex) => (
+                          <li key={subIndex} className="flex flex-col">
+                            <span className="flex items-center justify-between p-[10px_15px] hover:text-[var(--link-color)]">
+                              <Link
+                                href={subItem.href}
+                                title={subItem.title}
+                                onClick={(e) =>
+                                  handleMenuClick(e, subItem.href)
+                                }
+                                className="w-full text-left"
+                              >
+                                {subItem.title}
+                              </Link>
                               {subItem?.items && (
-                                <ul
-                                  ref={(el) => {
-                                    if (el) subMenuRefs.current[subIndex] = el;
-                                  }}
-                                  className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-                                  style={{ maxHeight: "0px" }}
+                                <span
+                                  className={`ml-[5px] transition-transform duration-300 ${openSubMenus[subIndex] ? "rotate-0" : "-rotate-90"}`}
+                                  onClick={(e) => toggleSubMenu(e, subIndex)}
                                 >
-                                  {subItem.items.map(
-                                    (subMenuItem, subMenuItemIndex) => (
-                                      <li
-                                        key={subMenuItemIndex}
-                                        className={`${openSubMenus[subIndex] ? "flex" : "hidden"}`}
-                                      >
-                                        <Link
-                                          href={subMenuItem.href}
-                                          title={subMenuItem.title}
-                                          onClick={(e) =>
-                                            handleMenuClick(e, subMenuItem.href)
-                                          }
-                                          className="p-[10px_15px] hover:text-[var(--link-color)]"
-                                        >
-                                          {subMenuItem.title}
-                                        </Link>
-                                      </li>
-                                    ),
-                                  )}
-                                </ul>
+                                  <Image
+                                    src="/svg/arrowdown.svg"
+                                    alt="arrow-down"
+                                    width={16}
+                                    height={16}
+                                  />
+                                </span>
                               )}
-                            </li>
-                          ))}
-                        </ul>
-                      </>
+                            </span>
+                            {subItem?.items && (
+                              <motion.ul
+                                variants={subMenuVariants}
+                                initial="closed"
+                                animate={
+                                  openSubMenus[subIndex] ? "open" : "closed"
+                                }
+                                className="overflow-hidden"
+                              >
+                                {subItem.items.map(
+                                  (subMenuItem, subMenuItemIndex) => (
+                                    <li key={subMenuItemIndex} className="flex">
+                                      <Link
+                                        href={subMenuItem.href}
+                                        title={subMenuItem.title}
+                                        onClick={(e) =>
+                                          handleMenuClick(e, subMenuItem.href)
+                                        }
+                                        className="p-[10px_15px] hover:text-[var(--link-color)]"
+                                      >
+                                        {subMenuItem.title}
+                                      </Link>
+                                    </li>
+                                  ),
+                                )}
+                              </motion.ul>
+                            )}
+                          </li>
+                        ))}
+                      </motion.ul>
                     )}
                   </li>
                 ))}
@@ -800,7 +808,7 @@ export default function Header() {
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Menu overlay */}
         <div

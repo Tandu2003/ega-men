@@ -151,7 +151,6 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
-
 /* Header */
 .header-menu-item::after {
   position: absolute;
@@ -210,6 +209,7 @@ body {
   line-height: 26px;
   text-align: center;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .tooltip-text::after {

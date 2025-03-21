@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -12,10 +13,20 @@ export default function NotFound() {
 
   return (
     <>
-      <section className="section page-404">
+      <motion.section
+        className="section page-404"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="container mt-4 py-5">
           <div className="row">
-            <div className="flex w-full flex-col items-center justify-center px-2.5 text-center">
+            <motion.div
+              className="flex w-full flex-col items-center justify-center px-2.5 text-center"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <Image src="/images/404.png" alt="404" width={600} height={267} />
               <h1 className="mt-10 text-3xl">TRANG KHÔNG ĐƯỢC TÌM THẤY</h1>
               <p className="text-[#727272]">
@@ -26,10 +37,10 @@ export default function NotFound() {
               <Link href="/" className="btn btn-primary mt-4">
                 Về trang chủ
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
     </>
   );
 }

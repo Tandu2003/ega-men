@@ -2,6 +2,7 @@
 
 import { useRouter, redirect } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import { useUser } from "@/context/UserContext";
@@ -147,8 +148,14 @@ export default function RegisterPage() {
           </div>
           <div className="row">
             <div className="m-auto w-full p-[15px] md:w-1/2 lg:w-5/12">
-              <div className="page-login">
-                <div id="login">
+              <div className="page-register">
+                <motion.div
+                  key="register"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.3 }}
+                >
                   <form method="post" onSubmit={handleRegister}>
                     <h2 className="mt-[15px] mb-5 text-center text-lg uppercase">
                       Thông tin cá nhân
@@ -247,7 +254,7 @@ export default function RegisterPage() {
                       </p>
                     )}
                   </form>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>

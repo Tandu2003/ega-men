@@ -2,6 +2,7 @@
 
 import { useRouter, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import { useUser } from "@/context/UserContext";
@@ -21,7 +22,7 @@ export default function LoginPage() {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleOnChange = (e: { target: { name: any; value: any } }) => {
+  const handleOnChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     if (name === "email") setEmail(value);
     if (name === "password") setPassword(value);
@@ -152,9 +153,15 @@ export default function LoginPage() {
           </div>
           <div className="row">
             <div className="m-auto w-full p-[15px] md:w-1/2 lg:w-5/12">
-              <div className="page-login">
+              <AnimatePresence mode="wait">
                 {isLogin ? (
-                  <div id="login">
+                  <motion.div
+                    key="login"
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.3 }}
+                  >
                     <form method="post" onSubmit={handleLogin}>
                       <div className="flex flex-col gap-2">
                         <label htmlFor="email">
@@ -212,9 +219,15 @@ export default function LoginPage() {
                         </Link>
                       </div>
                     </form>
-                  </div>
+                  </motion.div>
                 ) : (
-                  <div id="recover-password">
+                  <motion.div
+                    key="recover-password"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 50 }}
+                    transition={{ duration: 0.3 }}
+                  >
                     <form method="post" onSubmit={handleRecoverPassword}>
                       <h2 className="mt-[15px] mb-5 text-center text-lg uppercase">
                         Đặt lại mật khẩu
@@ -256,9 +269,9 @@ export default function LoginPage() {
                         Quay lại
                       </p>
                     </form>
-                  </div>
+                  </motion.div>
                 )}
-              </div>
+              </AnimatePresence>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function TopBar() {
@@ -17,10 +18,12 @@ export default function TopBar() {
   if (hidden) return null;
 
   return (
-    <div
-      className={`top-banner relative bg-[#81AACC] transition-all duration-500 ${
-        close ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
-      }`}
+    <motion.div
+      className="top-banner relative bg-[#81AACC]"
+      initial={{ opacity: 1, y: 0 }}
+      animate={close ? { opacity: 0, y: -50 } : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0, y: -50 }}
     >
       <div className="container px-0 text-center">
         <Link
@@ -30,13 +33,14 @@ export default function TopBar() {
         >
           FREESHIP VỚI ĐƠN HÀNG TỪ 500K
         </Link>
-        <button
+        <motion.button
           onClick={handleClose}
           className="absolute top-1/2 right-1 z-[9] h-6 w-6 -translate-y-1/2 rounded-full bg-white"
+          whileHover={{ scale: 1.2 }}
         >
           <span className="text-xl leading-1 font-thin">&times;</span>
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }
