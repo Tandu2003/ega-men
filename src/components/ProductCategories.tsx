@@ -1,13 +1,14 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import "swiper/css";
+import "swiper/css/scrollbar";
+
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useEffect, useRef, useState } from "react";
 import { Scrollbar } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/scrollbar";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function ProductCategories() {
   const collection = [

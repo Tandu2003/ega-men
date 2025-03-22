@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
-import CouponItem from "./CouponItem";
 import { useRef } from "react";
+
+import CouponItem from "./CouponItem";
 
 export default function CouponList() {
   const ref = useRef(null);

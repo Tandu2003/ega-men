@@ -1,12 +1,11 @@
 "use client";
 
-import { redirect, usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-
 import axios from "axios";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { useUser } from "@/context/UserContext";
 

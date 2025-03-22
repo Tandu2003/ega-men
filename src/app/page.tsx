@@ -1,9 +1,9 @@
 "use client";
 
-import ProductCategories from "@/components/ProductCategories";
 import CouponList from "@/components/CouponList";
 import Loading from "@/components/Loading";
 import Policy from "@/components/Policy";
+import ProductCategories from "@/components/ProductCategories";
 import SwiperSlider from "@/components/SwiperSlider";
 import { useUser } from "@/context/UserContext";
 

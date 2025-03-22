@@ -1,14 +1,13 @@
 "use client";
 
-import { useRouter, redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import { useUser } from "@/context/UserContext";
-
-import axios from "axios";
-import Link from "next/link";
 
 export default function AccountPage() {
   const router = useRouter();
